@@ -21,6 +21,8 @@ int wordCounter(std::string filename)
 	{
 		std::map<std::string, int> wordCountMap;
 		std::map<std::string, int>::iterator wcIterator;
+		std::map<int, std::vector<std::string>> countWordMap;
+		std::map<int, std::vector<std::string>>::iterator cwIterator;
 		std::vector<std::string> scratchArray;
 		std::string loopStr;
 		int maxOccur;
@@ -35,10 +37,6 @@ int wordCounter(std::string filename)
 		while (!scratchArray.empty())
 		{
 			wordCountMap[scratchArray.back()]++;
-			if (wordCountMap[scratchArray.back()] > maxOccur)
-			{
-				maxOccur = wordCountMap[scratchArray.back()];
-			}
 			scratchArray.pop_back();
 		}
 		scratchArray.clear();
@@ -50,8 +48,21 @@ int wordCounter(std::string filename)
 		}
 		fileOneOut.close();
 
+		for (wcIterator = wordCountMap.end(); wcIterator != wordCountMap.begin(); wcIterator--)
+		{
+			countWordMap[wcIterator->second].push_back(wcIterator->first);
+		}
 		ofstream fileTwoOut("list2.txt");
-
+		for (cwIterator = countWordMap.begin(); cwIterator != countWordMap.end(); ++cwIterator)
+		{
+			fileTwoOut << cwIterator->first;
+			while (!countWordMap[cwIterator->first].empty())
+			{
+				fileTwoOut << " " << cwIterator->second.back();
+				cwIterator->second.pop_back();
+			}
+			fileTwoOut << "\n";
+		}
 		fileTwoOut.close();
 	}
 	return 1;
