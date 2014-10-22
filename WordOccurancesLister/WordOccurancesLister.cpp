@@ -25,7 +25,6 @@ int wordCounter(std::string filename)
 		std::map<int, std::vector<std::string>>::iterator cwIterator;
 		std::vector<std::string> scratchArray;
 		std::string loopStr;
-		int maxOccur;
 
 		while (!fileIn.eof())
 		{
