@@ -100,5 +100,7 @@ int main(array<System::String ^> ^args)
 	{
 		cout << "Failed to generate lists";
 	}
+	cout << "Press Any Key to Coninue";
+	cin.get();
     return 0;
 }
