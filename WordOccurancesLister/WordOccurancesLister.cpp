@@ -4,11 +4,23 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <map>
 
 using namespace System;
 using namespace std;
+
+void split(std::string input, char delin, std::vector<std::string> &arrayOut) //Split the string by delin, and put all the things in the array.
+{
+	std::string splitStr;
+	std::stringstream ss(input);
+	while (!ss.eof())
+	{
+		getline(ss, splitStr, delin);
+		arrayOut.push_back(splitStr);
+	}
+}
 
 int wordCounter(std::string filename)
 {
@@ -21,15 +33,16 @@ int wordCounter(std::string filename)
 	{
 		std::map<std::string, int> wordCountMap;
 		std::map<std::string, int>::iterator wcIterator;
+		std::map<std::string, int>::reverse_iterator wcRevIterator; // For keeping the sorted-by-occurence list in alphabetical order
 		std::map<int, std::vector<std::string>> countWordMap;
-		std::map<int, std::vector<std::string>>::iterator cwIterator;
+		std::map<int, std::vector<std::string>>::reverse_iterator cwIterator;
 		std::vector<std::string> scratchArray;
 		std::string loopStr;
 
 		while (!fileIn.eof())
 		{
-			getline(fileIn, loopStr, ' ');
-			scratchArray.push_back(loopStr);
+			getline(fileIn, loopStr);
+			split(loopStr, ' ', scratchArray);
 		}
 		fileIn.close();
 
@@ -47,12 +60,14 @@ int wordCounter(std::string filename)
 		}
 		fileOneOut.close();
 
-		for (wcIterator = wordCountMap.end(); wcIterator != wordCountMap.begin(); wcIterator--)
+		for (wcRevIterator = wordCountMap.rbegin(); wcRevIterator != wordCountMap.rend(); ++wcRevIterator)
 		{
-			countWordMap[wcIterator->second].push_back(wcIterator->first);
+			countWordMap[wcRevIterator->second].push_back(wcRevIterator->first);
 		}
+		wordCountMap.clear();
+
 		ofstream fileTwoOut("list2.txt");
-		for (cwIterator = countWordMap.begin(); cwIterator != countWordMap.end(); ++cwIterator)
+		for (cwIterator = countWordMap.rbegin(); cwIterator != countWordMap.rend(); ++cwIterator)
 		{
 			fileTwoOut << cwIterator->first;
 			while (!countWordMap[cwIterator->first].empty())
@@ -63,6 +78,7 @@ int wordCounter(std::string filename)
 			fileTwoOut << "\n";
 		}
 		fileTwoOut.close();
+		countWordMap.clear();
 	}
 	return 1;
 }
